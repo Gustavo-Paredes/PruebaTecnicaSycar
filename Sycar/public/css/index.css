@@ -1,0 +1,32 @@
+.BtnCrear {
+    padding: 10px 20px; 
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.tablaCli {
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 20px; 
+    font-size: 18px; 
+    text-align: center;
+}
+.BtnEdit {
+    padding: 10px 20px; 
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+}
+.BtnEliminar {
+    padding: 8px 12px; 
+    background-color: #dc3545; 
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 16px;
+}

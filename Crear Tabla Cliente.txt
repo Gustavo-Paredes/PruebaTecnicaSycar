@@ -1,0 +1,14 @@
+CREATE TABLE clientes (
+    id         INTEGER  PRIMARY KEY AUTOINCREMENT
+                        NOT NULL,
+    Nombre     VARCHAR  NOT NULL,
+    Apellido   VARCHAR  NOT NULL,
+    Edad       INTEGER  NOT NULL,
+    Genero     VARCHAR  NOT NULL,
+    Email      VARCHAR  NOT NULL,
+    Pais       VARCHAR  NOT NULL,
+    Ciudad     VARCHAR  NOT NULL,
+    Foto       VARCHAR  NOT NULL,
+    created_at DATETIME,
+    updated_at DATETIME
+);
