@@ -1,8 +1,10 @@
 <?php
 namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use Exception;
 
 //importa el modelo Cliente
 use App\Models\Cliente;
@@ -11,34 +13,38 @@ class ClientesController extends Controller
 {
     public function index()
     {
-        // se llama a la API externa
-        $url = "https://randomuser.me/api/";
-        $response = Http::get($url);
+        try {
+            // se llama a la API externa
+            $url = "https://randomuser.me/api/";
+            $response = Http::get($url);
 
-        // verifica si recive los datos correctamente
-        if ($response->status() == 200) {
-                    $data = $response->json();
-            
-            // se guardan los clientes en la bd
-            foreach ($data['results'] as $cliente) {
-                Cliente::create([
-                    'Nombre'    => $cliente['name']['first'],           // Nombre
-                    'Apellido'  => $cliente['name']['last'],            // Apellido
-                    'Edad'      => $cliente['dob']['age'],              // Edad
-                    'Genero'    => $cliente['gender'],                  // Genero
-                    'Email'     => $cliente['email'],                   // Email
-                    'Pais'      => $cliente['location']['country'],     // Pais
-                    'Ciudad'    => $cliente['location']['city'],        // Ciudad
-                    'Foto'      => $cliente['picture']['large'],        // Foto
-                ]);
+            // verifica si recive los datos correctamente
+            if ($response->status() == 200) {
+                $data = $response->json();
+
+                // se guardan los clientes en la bd
+                foreach ($data['results'] as $cliente) {
+                    Cliente::create([
+                        'Nombre' => $cliente['name']['first'],           // Nombre
+                        'Apellido' => $cliente['name']['last'],            // Apellido
+                        'Edad' => $cliente['dob']['age'],              // Edad
+                        'Genero' => $cliente['gender'],                  // Genero
+                        'Email' => $cliente['email'],                   // Email
+                        'Pais' => $cliente['location']['country'],     // Pais
+                        'Ciudad' => $cliente['location']['city'],        // Ciudad
+                        'Foto' => $cliente['picture']['large'],        // Foto
+                    ]);
+                }
+
+                $clientes = Cliente::all();
+
+                return view('clientes', compact('clientes'));
+            } else {
+                //msg de error
+                return response()->json(['error' => 'Error al obtener los datos'], $response->status());
             }
-
-            $clientes = Cliente::all();
-            
-        return view('clientes', compact('clientes'));
-        } else {
-            //msg de error
-            return response()->json(['error' => 'Error al obtener los datos'], $response->status());
+        } catch (Exception $e) {
+             dd($e->getMessage());
         }
 
     }
@@ -50,20 +56,24 @@ class ClientesController extends Controller
 
     public function Guardar(Request $request)
     {
-        //validacion de datos para guardar
-        $request->validate([
-            'Nombre' => 'required|string',
-            'Apellido' => 'required|string',
-            'Edad' => 'required|integer|min:1|max:101',
-            'Genero' => 'required|in:male,female',
-            'Email' => 'required|email',
-            'Pais' => 'required|string',
-            'Ciudad' => 'required|string',
-        ]);
+        try {
+            //validacion de datos para guardar
+            $request->validate([
+                'Nombre' => 'required|string',
+                'Apellido' => 'required|string',
+                'Edad' => 'required|integer|min:1|max:101',
+                'Genero' => 'required|in:male,female',
+                'Email' => 'required|email',
+                'Pais' => 'required|string',
+                'Ciudad' => 'required|string',
+            ]);
+            Cliente::create($request->all());
 
-        Cliente::create($request->all());
+            return redirect('/');
 
-        return redirect('/');
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     public function editar($id)
@@ -74,6 +84,7 @@ class ClientesController extends Controller
 
     public function actualizar(Request $request, $id)
     {
+        try {
         $request->validate([
             'Nombre' => 'required|string',
             'Apellido' => 'required|string',
@@ -87,15 +98,20 @@ class ClientesController extends Controller
         $cliente = Cliente::findOrFail($id);
         $cliente->update($request->all());
 
-        return redirect('/');
+        return redirect('/');} catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     public function Eliminar($id)
     {
+        try {
         $cliente = Cliente::findOrFail($id);
         $cliente->delete();
-        
-        return redirect('/');
+
+        return redirect('/');} catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
 }
